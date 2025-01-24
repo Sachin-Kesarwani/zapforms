@@ -58,7 +58,7 @@ export default function RootLayout({ children }) {
                 </ul>
               </div>
             </div>
-            <div className={` ${standardMargin} min-h-[100vh]`}>{children}</div>
+            <div className={`min-h-[100vh]`}>{children}</div>
           </div>
         </HeroUIProvider>
 

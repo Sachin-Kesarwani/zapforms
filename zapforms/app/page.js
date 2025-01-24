@@ -2,6 +2,7 @@ import Createformcomp from "@/src/shared/createformcomp";
 import Image from "next/image";
 import zapformsLogo from "../assets/zapformslogo.png"; // Static import
 import ScrollEffectComponent from "@/src/shared/scrollviewEffect";
+import SignupPage from "@/src/components/signup";
 
 export default function Home() {
   return (
