@@ -9,4 +9,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Create ;
