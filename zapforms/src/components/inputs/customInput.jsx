@@ -20,7 +20,7 @@ const CustomInput = ({ fieldIndex, updateFormdata, type ,showRightIcon=false }) 
   };
 
   return (
-      <div>
+      <div className='mt-3'>
         <TextField
           id="outlined-multiline-static"
           value={inputValue} // Step 4: Bind value to state
