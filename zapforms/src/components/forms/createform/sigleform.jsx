@@ -6,14 +6,14 @@ import { CreateformContext } from "@/src/context";
 
 const Sigleform = (props) => {
   const { index  , item={}} = props;
-  const {type , } = item;
+  const {type} = item;
   let {updateFormdata} = useContext(CreateformContext);
 
 
   return (
     <div style={{boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px"}} className="flex flex-col justify-between min-h-48 w-full rounded-xl  mt-6">
       <div className="w-full ">
-        <CustomizedInputBase index={index} />
+        <CustomizedInputBase index={index} type={type} item={item}/>
       </div>
       <div>
         {

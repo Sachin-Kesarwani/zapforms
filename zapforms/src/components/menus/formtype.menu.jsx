@@ -22,7 +22,7 @@ const formFields = [
 
 const ITEM_HEIGHT = 48;
 
-export default function FormTypeMenu({fieldIndex}) {
+export default function FormTypeMenu({fieldIndex , seletedType}) {
   const [anchorEl, setAnchorEl] =useState(null);
   let {updateFormdata} = useContext(CreateformContext)
   const open = Boolean(anchorEl);
@@ -65,7 +65,7 @@ export default function FormTypeMenu({fieldIndex}) {
         }}
       >
         {formFields.map((option , index) => (
-          <MenuItem key={index.toString()} selected={option === 'Pyxis'} onClick={()=>handleClose({index:fieldIndex , item:option})}>
+          <MenuItem className={``} key={index.toString()} selected={option.type ===seletedType} onClick={()=>handleClose({index:fieldIndex , item:option})}>
             {option.title}
           </MenuItem>
         ))}

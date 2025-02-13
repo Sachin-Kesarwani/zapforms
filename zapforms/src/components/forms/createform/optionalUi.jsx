@@ -13,7 +13,7 @@ const OptionalUi = (props) => {
       <div className="ml-2">
         <p className="my-1">Field Type : {type}</p>
         <TextField
-          id="outlined-multiline-static"
+          variant="standard"
           label="Placeholder"
           defaultValue=""
           onChange={(e) =>
@@ -29,7 +29,7 @@ const OptionalUi = (props) => {
       <div className="ml-2">
         <p className="my-1">Field Type : {type}</p>
         <TextField
-          id="outlined-multiline-static"
+          variant="standard"
           label="Placeholder"
           defaultValue=""
           onChange={(e) =>
@@ -45,7 +45,7 @@ const OptionalUi = (props) => {
       <div className="ml-2">
         <p className="my-1">Field Type : {type}</p>
         <TextField
-          id="outlined-multiline-static"
+          variant="standard"
           label="Placeholder"
           defaultValue=""
           type="email"
@@ -58,12 +58,27 @@ const OptionalUi = (props) => {
         />
       </div>
     ),
-
+    number: (
+      <div className="ml-2">
+        <p className="my-1">Field Type : {type}</p>
+        <TextField
+          variant="standard"
+          label="Placeholder"
+          defaultValue=""
+          onChange={(e) =>
+            updateFormdata({
+              index: fieldIndex,
+              data: { placeholder: e.target.value },
+            })
+          }
+        />
+      </div>
+    ),
     password: (
       <div className="ml-2  ">
         <p className="my-1">Field Type : {type}</p>
         <TextField
-          id="outlined-multiline-static"
+          variant="standard"
           label="Placeholder"
           defaultValue=""
           onChange={(e) =>
@@ -80,7 +95,7 @@ const OptionalUi = (props) => {
         <p className="my-1">Field Type : {type}</p>
         <div>
           <TextField
-            id="outlined-multiline-static"
+            variant="standard"
             defaultValue="Option"
             type="date"
             disabled
@@ -218,24 +233,40 @@ const OptionalUi = (props) => {
       <div className="ml-2">
         <p className="my-1">Field Type : {type}</p>
         <div className={`flex flex-col lg:flex-row  justify-evenly`}>
-        <div className={`w-[95%] lg:w-[48%] `}>
-        <p className="my-1">Add Initial range</p>
-        <Slider
-          size="small"
-          defaultValue={0}
-          aria-label="Small"
-          valueLabelDisplay="auto"
-        />
-        </div>
-        <div className={`w-[95%] lg:w-[48%] `}>
-        <p className="my-1">Add Final range</p>
-        <Slider
-          size="small"
-          defaultValue={70}
-          aria-label="Small"
-          valueLabelDisplay="auto"
-        />
-        </div>
+          <div className={`w-[95%] lg:w-[48%] `}>
+            <p className="my-1">Add Initial range</p>
+            <Slider
+              size="small"
+              defaultValue={0}
+              aria-label="Small"
+              onChange={(e) => {
+                updateFormdata({
+                  index: fieldIndex,
+                  data: {
+                    validation: { minrange: e.target.value },
+                  },
+                });
+              }}
+              valueLabelDisplay="auto"
+            />
+          </div>
+          <div className={`w-[95%] lg:w-[48%] `}>
+            <p className="my-1">Add Final range</p>
+            <Slider
+              size="small"
+              defaultValue={70}
+              aria-label="Small"
+              onChange={(e) => {
+                updateFormdata({
+                  index: fieldIndex,
+                  data: {
+                    validation: { maxrange: e.target.value },
+                  },
+                });
+              }}
+              valueLabelDisplay="auto"
+            />
+          </div>
         </div>
       </div>
     ),
