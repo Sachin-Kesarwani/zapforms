@@ -4,7 +4,7 @@ import  { NextRequest } from 'next/server'
  
 // This function can be marked `async` if using `await` inside
 export function middleware(request) {
-    const isLogged=true;
+    const isLogged=false;
     if(!isLogged){
         return  NextResponse.redirect(new URL('/authentication', request.url))
     }

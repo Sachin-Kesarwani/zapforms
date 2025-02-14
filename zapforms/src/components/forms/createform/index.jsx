@@ -20,6 +20,7 @@ const Createform = () => {
       console.log("going to save form data")
     }
   }
+  console.log(formList)
   return (
     <>
     <CreateformContext.Provider value={{updateFormdata }}>

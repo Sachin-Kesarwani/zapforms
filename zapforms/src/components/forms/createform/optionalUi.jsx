@@ -4,9 +4,16 @@ import React, { memo, useContext } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CustomInput from "../../inputs/customInput";
 import Pill from "../../pill";
+import { capitalizeFirstChar } from "@/src/utils";
+import ErrorMessage from "@/src/shared/errorMessage";
 const OptionalUi = (props) => {
   const { item, index: fieldIndex } = props;
-  const { type, options = [] } = item;
+  const { type, options = [], errors } = item;
+  const {
+    options: errorInoptions,
+    minrange: errorInminrange,
+    maxrange: errorInmaxrange,
+  } = errors || {};
   let { updateFormdata } = useContext(CreateformContext);
   const rquiredItemsAccordingToType = {
     text: (
@@ -90,6 +97,23 @@ const OptionalUi = (props) => {
         />
       </div>
     ),
+    tel: (
+      <div className="ml-2  ">
+        <p className="my-1">Field Type : {type}</p>
+        {/* <TextField
+          variant="standard"
+          label="Placeholder"
+          defaultValue=""
+          type={"tel"}
+          onChange={(e) =>
+            updateFormdata({
+              index: fieldIndex,
+              data: { placeholder: e.target.value },
+            })
+          }
+        /> */}
+      </div>
+    ),
     date: (
       <div className="ml-2  ">
         <p className="my-1">Field Type : {type}</p>
@@ -147,6 +171,7 @@ const OptionalUi = (props) => {
             }
           }}
         />
+        <ErrorMessage message={errorInoptions} />
       </div>
     ),
     checkbox: (
@@ -187,6 +212,7 @@ const OptionalUi = (props) => {
             }
           }}
         />
+        <ErrorMessage message={errorInoptions} />
       </div>
     ),
     radio: (
@@ -227,6 +253,7 @@ const OptionalUi = (props) => {
             }
           }}
         />
+        <ErrorMessage message={errorInoptions} />
       </div>
     ),
     range: (
@@ -243,29 +270,33 @@ const OptionalUi = (props) => {
                 updateFormdata({
                   index: fieldIndex,
                   data: {
-                    validation: { minrange: e.target.value },
+                    validation: { ...item.validation , minrange: e.target.value },
+                    errors:{...errors , minrange:undefined}
                   },
                 });
               }}
               valueLabelDisplay="auto"
             />
+            <ErrorMessage message={errorInminrange} />
           </div>
           <div className={`w-[95%] lg:w-[48%] `}>
             <p className="my-1">Add Final range</p>
             <Slider
               size="small"
-              defaultValue={70}
+              defaultValue={0}
               aria-label="Small"
               onChange={(e) => {
                 updateFormdata({
                   index: fieldIndex,
                   data: {
-                    validation: { maxrange: e.target.value },
+                    validation: {...item.validation ,  maxrange: e.target.value },
+                    errors:{...errors , maxrange:undefined}
                   },
                 });
               }}
               valueLabelDisplay="auto"
             />
+            <ErrorMessage message={errorInmaxrange} />
           </div>
         </div>
       </div>

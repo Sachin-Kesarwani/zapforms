@@ -5,16 +5,18 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import FormTypeMenu from "../menus/formtype.menu";
 import { CreateformContext } from "@/src/context";
+import ErrorMessage from "@/src/shared/errorMessage";
 
 export default function CustomizedInputBase({ index  ,type , item={}}) {
   const {errors} = item||{};
   const {label} = errors||{}
     let { updateFormdata } = React.useContext(CreateformContext);
-  console.log(item)
   return (
+    <>
     <Paper
+      elevation={0}
       component="form"
-      className={`border ${label?" border-red-400":"border-white"}`}
+      className={`border-b ${label?" border-red-400":"border-grey"}`}
       sx={{
         p: "2px 4px",
         display: "flex",
@@ -33,11 +35,17 @@ export default function CustomizedInputBase({ index  ,type , item={}}) {
         onChange={(e) =>
           updateFormdata({
             index: index,
-            data: { label: e.target.value },
+            data: { label: e.target.value   ,errors:{...errors , label:undefined}},
+
           })
         }      />
       <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
       <FormTypeMenu fieldIndex={index}  seletedType={type}/>
     </Paper>
+    <div className="ml-2">
+    <ErrorMessage message={label}/>
+    </div>
+  
+    </>
   );
 }

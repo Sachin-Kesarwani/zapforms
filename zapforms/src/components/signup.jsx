@@ -3,6 +3,11 @@
 import React, { useState } from "react";
 import OTPInput from "./otp";
 import { validateRequiredFields } from "../utils";
+import { createUser, loginUser, verifyOtp } from "../actions/auth.action";
+import { SUCCES_STATUS } from "../constants/status";
+import { Alert } from "@mui/material";
+import ToastComponent from "../shared/toast";
+import { useToast } from "../hooks/useToast";
 
 const AuthenticationComp = () => {
   const [isSignedUp, setIsSignedUp] = useState(false);
@@ -10,17 +15,36 @@ const AuthenticationComp = () => {
   const [formdata, setformData] = useState({ username: "", email: "" });
   const [error, setError] = useState({});
   const [otp, setOtp] = useState(Array(6).fill(""));
+  const { showToast } = useToast();
 
-  const handleSignup = () => {
-    const { isValid, error = {} } = validateRequiredFields(formdata, [
-      "username",
-      "email",
-    ]);
+  const handleSignup = async () => {
+    const validationArray = ["email"]
+    if(isSignedUp){
+      validationArray.push("username")
+    }
+    const { isValid, error = {} } = validateRequiredFields(formdata,validationArray);
     if (!isValid) {
       setError(error);
       return;
     }
-    setShowOtp(true);
+    if(isSignedUp){
+     const res= await createUser({body:formdata})
+     const {status} = res;
+     if(status == 409){
+      setIsSignedUp(false)
+     }else{
+      setShowOtp(true)
+     }
+
+    }else{
+      const res= await loginUser({body:formdata});
+      const {status} = res;
+      if(status == SUCCES_STATUS){
+        setShowOtp(true)
+      }
+     
+    }
+    // setShowOtp(true);
   };
 
   const handleOtpChange = (val) => {
@@ -32,10 +56,10 @@ const AuthenticationComp = () => {
     setformData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError((prev) => ({ ...prev, [e.target.name]: undefined }));
   };
-  const handleSubmitOtp = () => {
-    setTimeout(() => {
-      alert("OTP submitted: " + otp);
-    }, 0);
+  const handleSubmitOtp = async () => {
+    const res= await verifyOtp({body:{email:formdata?.email , otp:otp}});
+    console.log(res)
+    showToast('Hello! This is a toast')
   };
 
   console.log(error, formdata);
@@ -47,6 +71,8 @@ const AuthenticationComp = () => {
           "url(https://img.freepik.com/free-vector/colorful-abstract-background_23-2148461177.jpg?t=st=1737710135~exp=1737713735~hmac=3549a81139e667c5f52e91e07739cd999541629060c2cef0474052c7f7dc4f99&w=900)",
       }}
     >
+     
+
       {/* Dark overlay over the image */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
 

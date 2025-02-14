@@ -47,26 +47,30 @@ export let standardMargin =
       select: ["label", "options"],
       checkbox: ["label", "options"],
       radio: ["label", "options"],
-      range: ["label", "minrange", "maxrange"],
+      range: ["label", "maxrange"],
     };
   
     let isFullFormValid = true;
   
     const validatedData = formArray
-      // .filter((item) => Object.keys(item).length > 0)
       .map((item, index) => {
-        const { type = "" } = item;
+        const { type = ""  , validation={}} = item;
         const isError = {};
   
         if (type && required[type]) {
           required[type].forEach((key) => {
-            if (!item[key] || item[key].length === 0) {
-              isError[key] = `${key} is required`;
+            if(key=="maxrange"){
+              const { maxrange}  = validation
+              if(!maxrange || maxrange==0){
+                isError[key] = `${key} is required`;
+              }
+            }else if (!item[key] || item[key].length === 0) {
+              isError[key] = `${key} ${key=="options"?"are":"is"} required`;
             }
           });
         }else{
           required[type].forEach((key)=>{
-            isError[key] = `${key} is required`;          })
+            isError[key] = `${key} ${key=="options"?"are":"is"} required`;          })
         }
   
         if (Object.keys(isError).length > 0) {
@@ -85,3 +89,7 @@ export let standardMargin =
     };
   }
   
+
+  export function capitalizeFirstChar(text="") {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
