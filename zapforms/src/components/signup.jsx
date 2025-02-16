@@ -1,50 +1,65 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import OTPInput from "./otp";
 import { validateRequiredFields } from "../utils";
 import { createUser, loginUser, verifyOtp } from "../actions/auth.action";
 import { SUCCES_STATUS } from "../constants/status";
-import { Alert } from "@mui/material";
-import ToastComponent from "../shared/toast";
-import { useToast } from "../hooks/useToast";
+import { useSnackbar } from "../providers/snackbarProvide";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import Icon from "../shared/icon";
+import { localStorageUtil } from "../storage/localstorage";
+import { USER_TOKEN } from "../constants";
 
 const AuthenticationComp = () => {
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
+  const [isotploading , setIsotploading] = useState(false)
   const [formdata, setformData] = useState({ username: "", email: "" });
   const [error, setError] = useState({});
   const [otp, setOtp] = useState(Array(6).fill(""));
-  const { showToast } = useToast();
-
+  const { showSnackbar } = useSnackbar();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+  const redirectTo = searchParams.get('redirect')||"/"
   const handleSignup = async () => {
-    const validationArray = ["email"]
-    if(isSignedUp){
-      validationArray.push("username")
+    const validationArray = ["email"];
+    if (isSignedUp) {
+      validationArray.push("username");
     }
-    const { isValid, error = {} } = validateRequiredFields(formdata,validationArray);
+    const { isValid, error = {} } = validateRequiredFields(
+      formdata,
+      validationArray
+    );
     if (!isValid) {
       setError(error);
       return;
     }
-    if(isSignedUp){
-     const res= await createUser({body:formdata})
-     const {status} = res;
-     if(status == 409){
-      setIsSignedUp(false)
-     }else{
-      setShowOtp(true)
-     }
-
-    }else{
-      const res= await loginUser({body:formdata});
-      const {status} = res;
-      if(status == SUCCES_STATUS){
-        setShowOtp(true)
+    if (isSignedUp) {
+      const res = await createUser({ body: formdata });
+      const { status } = res;
+      if (status == 409) {
+        startTransition(() => {
+          setIsSignedUp(false);
+        });
+      } else {
+        startTransition(() => {
+          setShowOtp(true);
+        });
       }
-     
+    } else {
+      const res = await loginUser({ body: formdata });
+      const { status, message } = res;
+      if (status == SUCCES_STATUS) {
+        startTransition(() => {
+          setShowOtp(true);
+        });
+      } else {
+        startTransition(() => {
+          setError((prev) => ({ ...prev, email: message }));
+        });
+      }
     }
-    // setShowOtp(true);
   };
 
   const handleOtpChange = (val) => {
@@ -56,13 +71,25 @@ const AuthenticationComp = () => {
     setformData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError((prev) => ({ ...prev, [e.target.name]: undefined }));
   };
-  const handleSubmitOtp = async () => {
-    const res= await verifyOtp({body:{email:formdata?.email , otp:otp}});
-    console.log(res)
-    showToast('Hello! This is a toast')
+  const handleSubmitOtp = async (incomingotp="") => {
+   if(incomingotp.length<6){
+    showSnackbar({ message: "Please enter 6 digit otp", severity: "error" });
+    return
+   }
+   setIsotploading(true)
+    const res = await verifyOtp({
+      body: { email: formdata?.email, otp: incomingotp },
+    });
+    const { status, message , token } = res || {};
+    if (status === SUCCES_STATUS) {
+        showSnackbar({ message: message, severity: "success" });
+        localStorageUtil.set(USER_TOKEN , token)
+        redirect(redirectTo);
+    } else {
+        showSnackbar({ message: message, severity: "error" });
+    }
+    setIsotploading(false)
   };
-
-  console.log(error, formdata);
   return (
     <div
       className="relative min-h-screen bg-cover bg-center"
@@ -71,11 +98,8 @@ const AuthenticationComp = () => {
           "url(https://img.freepik.com/free-vector/colorful-abstract-background_23-2148461177.jpg?t=st=1737710135~exp=1737713735~hmac=3549a81139e667c5f52e91e07739cd999541629060c2cef0474052c7f7dc4f99&w=900)",
       }}
     >
-     
-
       {/* Dark overlay over the image */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
-
       {/* Content above the image */}
       <div className="relative z-10 flex flex-col justify-center items-center min-h-screen text-white space-y-6 px-6">
         <div className="text-center">
@@ -105,6 +129,7 @@ const AuthenticationComp = () => {
                           error["username"] ? "border-red-600" : ""
                         } w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none`}
                         type="text"
+                        value={formdata?.username || ""}
                         required={true}
                         placeholder="Jane Doe"
                         aria-label="Full name"
@@ -121,6 +146,7 @@ const AuthenticationComp = () => {
                       onChange={handleFormInputChange}
                       type="email"
                       name="email"
+                      value={formdata?.email || ""}
                       placeholder="Email"
                       required={true}
                       className={`appearance-none  bg-transparent border-b w-full text-white ${
@@ -134,11 +160,12 @@ const AuthenticationComp = () => {
                     )}
                   </div>
                   <button
+                    disabled={isPending}
                     type="button"
                     onClick={handleSignup}
                     className="text-white   animate-bounce w-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                   >
-                    {isSignedUp ? "Signup" : "Login"}
+                    {isPending ? "Loading..." : isSignedUp ? "Signup" : "Login"}
                   </button>
                 </div>
                 <span className="text-white mt-2 text-sm">
@@ -156,7 +183,10 @@ const AuthenticationComp = () => {
                     <>
                       Don't have an account?{" "}
                       <span
-                        onClick={() => setIsSignedUp(true)}
+                        onClick={() => {
+                          setIsSignedUp(true);
+                          setError({});
+                        }}
                         className="text-blue-500 hover:underline cursor-pointer"
                       >
                         Create one
@@ -168,20 +198,26 @@ const AuthenticationComp = () => {
             </>
           ) : (
             <>
-              <h2 className="text-3xl font-semibold text-center text-white">
-                Enter OTP
-              </h2>
+              <div>
+                <button onClick={() => setShowOtp(false)}>
+                  <Icon type={"left_arrow"} color={"white"} size={30} />
+                </button>
+                <h2 className="text-3xl font-semibold text-center text-white">
+                  Enter OTP
+                </h2>
+              </div>
 
               <OTPInput
                 onOTPChange={handleOtpChange}
                 onOTPComplete={handleSubmitOtp}
               />
               <button
+              disabled={isotploading}
                 type="button"
-                onClick={handleSubmitOtp}
+                onClick={()=>handleSubmitOtp()}
                 className="text-white w-full   animate-bounce bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
               >
-                Verify OTP
+                {isotploading ? "Verifying OTP" : "Verify OTP"}
               </button>
             </>
           )}

@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import zapformsLogo from "../assets/zapformslogo.png"; // Static import
 import { standardMargin } from "../src/utils/index";
+import { SnackbarProvider } from "@/src/providers/snackbarProvide";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,7 +59,11 @@ export default function RootLayout({ children }) {
                 </ul>
               </div>
             </div>
-            <div className={`min-h-[100vh]`}>{children}</div>
+            <div className={`min-h-[100vh]`}>
+              <SnackbarProvider>
+              {children}
+              </SnackbarProvider>
+           </div>
           </div>
         </HeroUIProvider>
 

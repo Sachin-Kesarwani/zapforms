@@ -9,9 +9,12 @@ export let standardMargin =
     requiredFields.forEach((field) => {
       if (!formData[field]) {
         errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+      } else if (field === "email" && !isValidEmail(formData[field])) {
+        // If the field is email, validate its format
+        errors[field] = "Invalid email address";
       }
     });
-  
+ 
     // If there are errors, return isValid: false and the error object
     if (Object.keys(errors).length > 0) {
       return { isValid: false, error: errors };
@@ -20,22 +23,13 @@ export let standardMargin =
     // If no errors, return isValid: true and an empty error object
     return { isValid: true, error: {} };
   };
+  export const isValidEmail = (email) => {
+    // This regex pattern is a common approach to validate email addresses.
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
   
-  [
-    { id: "textInput", title: "Text", value: "", type: "text" },
-    { id: "textAreaInput", title: "TextArea", value: "", type: "textarea" },
-    { id: "emailInput", title: "Email", value: "", type: "email" },
-    { id: "passwordInput", title: "Password", value: "", type: "password" },
-    { id: "dateInput", title: "Date", value: "", type: "date" },
-    { id: "numberInput", title: "Number", value: "", type: "number" },
-    { id: "phoneInput", title: "Phone", value: "", type: "tel" },
-    { id: "selectInput", title: "Select", value: "", type: "select",  },
-    { id: "checkboxInput", title: "Checkbox", value: false, type: "checkbox" },
-    { id: "radioInput", title: "Radio", value: "", type: "radio", },
-    // { id: "fileInput", title: "File", value: "", type: "file" },
-    { id: "rangeInput", title: "Range", value: "", type: "range", min: 0, max: 100 },
-  ];
-  export function validateFormArray(formArray = []) {
+   export function validateFormArray(formArray = []) {
     const required = {
       text: ["label"],
       textarea: ["label"],

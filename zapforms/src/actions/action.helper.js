@@ -12,7 +12,6 @@ const actionHelpers = {
   
     // parseJSON: (response) => response.json(),
     parseJSON: (response) => {
-        console.log(response)
       // Attach status to the parsed JSON object
       return response.json().then((data) => {
         data.status = response.status;

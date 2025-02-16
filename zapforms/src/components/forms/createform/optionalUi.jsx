@@ -143,7 +143,6 @@ const OptionalUi = (props) => {
               <Pill
                 label={value}
                 onClickIcon={(val) => {
-                  console.log(val);
                   updateFormdata({
                     index: fieldIndex,
                     data: {
@@ -184,7 +183,6 @@ const OptionalUi = (props) => {
               <Pill
                 label={value}
                 onClickIcon={(val) => {
-                  console.log(val);
                   updateFormdata({
                     index: fieldIndex,
                     data: {
