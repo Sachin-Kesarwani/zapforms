@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+import { USER_TOKEN } from "../constants";
 
 
 
@@ -17,8 +19,10 @@ export const getPostHeader=({
     body,
     type = 'application/json',
     contentType = 'application/json',
+    passToken=false
 })=>{
-   return {
+  const token = Cookies.get(USER_TOKEN);
+  const res= {
     body:JSON.stringify(body),
     method:"POST",
     headers: {
@@ -27,4 +31,8 @@ export const getPostHeader=({
       },
     credentials: 'same-origin',
    }
+   if(passToken){
+    res.headers["authorization"]=`Bearer ${token}`
+   }
+   return res
 }

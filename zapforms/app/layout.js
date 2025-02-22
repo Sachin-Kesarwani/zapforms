@@ -39,13 +39,15 @@ export default function RootLayout({ children }) {
               style={{ boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px" }}
               className=" flex flex-row justify-between h-16 w-full px-6"
             >
-              <div className="flex flex-row justify-center items-center overflow-hidden">
+              <div  className="flex flex-row justify-center cursor-poiter items-center overflow-hidden">
+              <Link href={"/"}>
                 <Image
                   alt="zapformslogo"
                   src={zapformsLogo}
                   width={100}
                   height={100}
                 />
+                </Link>
               </div>
               <div className="flex flex-row items-center">
                 <ul className="flex">

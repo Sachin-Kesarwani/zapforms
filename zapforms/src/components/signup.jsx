@@ -10,6 +10,7 @@ import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Icon from "../shared/icon";
 import { localStorageUtil } from "../storage/localstorage";
 import { USER_TOKEN } from "../constants";
+import   CookieManager from "../storage/cookiesstorage";
 
 const AuthenticationComp = () => {
   const [isSignedUp, setIsSignedUp] = useState(false);
@@ -83,13 +84,15 @@ const AuthenticationComp = () => {
     const { status, message , token } = res || {};
     if (status === SUCCES_STATUS) {
         showSnackbar({ message: message, severity: "success" });
-        localStorageUtil.set(USER_TOKEN , token)
+         CookieManager.set(USER_TOKEN, token)
+        // localStorageUtil.set(USER_TOKEN , token)
         redirect(redirectTo);
     } else {
         showSnackbar({ message: message, severity: "error" });
     }
     setIsotploading(false)
   };
+ 
   return (
     <div
       className="relative min-h-screen bg-cover bg-center"
@@ -105,6 +108,9 @@ const AuthenticationComp = () => {
         <div className="text-center">
           <h1 className="text-5xl font-semibold animate__animated animate__fadeIn animate__delay-1s">
             Welcome to Our Service
+            <button onClick={()=>test()}>
+            test
+            </button>
           </h1>
           <p className="text-xl animate__animated animate__fadeIn animate__delay-2s">
             Create your account to get started.

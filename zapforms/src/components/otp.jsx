@@ -26,6 +26,19 @@ const OTPInput = ({ onOTPChange, onOTPComplete }) => {
       inputs[index - 1].current.focus();
     }
   };
+  const handlePaste = (e) => {
+    const pastedData = e.clipboardData.getData("text").trim();
+    if (/^\d{6}$/.test(pastedData)) {
+      const newOtp = pastedData.split("");
+      setOtp(newOtp);
+      onOTPChange(newOtp.join(""));
+      onOTPComplete(newOtp.join(""));
+
+      // Move focus to the last input
+      inputs.current[5].focus();
+    }
+    e.preventDefault();
+  };
 
   return (
     <div className="">
@@ -40,6 +53,7 @@ const OTPInput = ({ onOTPChange, onOTPComplete }) => {
             onChange={(e) => handleChange(e.target.value, index)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             placeholder="o"
+            onPaste={index === 0 ? handlePaste : null} 
             className="w-8 h-8 sm:w-12 sm:h-12 md:w-13 md:h-13  text-center text-blue-900 border-[1px] border-gray-300 rounded-md text-lg focus:outline-none focus:ring-[1px] focus:ring-green-500"
           />
         ))}

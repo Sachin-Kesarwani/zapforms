@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div>
       <Createformcomp />
-      <section
+      {/* <section
         id="about"
         className="flex flex-col md:flex-row items-center justify-between space-y-8 md:space-y-0 p-8"
       >
@@ -67,7 +67,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
