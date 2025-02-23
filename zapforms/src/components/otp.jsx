@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 
-const OTPInput = ({ onOTPChange, onOTPComplete }) => {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+const OTPInput = ({ onOTPChange, onOTPComplete , existOtp =["", "", "", "", "", ""]}) => {
+  const [otp, setOtp] = useState(existOtp);
   const inputs = Array(6).fill(null).map(() => useRef(null));
 
   const handleChange = (value, index) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import OTPInput from "./otp";
 import { validateRequiredFields } from "../utils";
 import { createUser, loginUser, verifyOtp } from "../actions/auth.action";
@@ -10,19 +10,29 @@ import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Icon from "../shared/icon";
 import { localStorageUtil } from "../storage/localstorage";
 import { USER_TOKEN } from "../constants";
-import   CookieManager from "../storage/cookiesstorage";
+import CookieManager from "../storage/cookiesstorage";
 
 const AuthenticationComp = () => {
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
+  const emailfromSearchParams = searchParams.get("email") || "";
+  const otpfromSearchParams = searchParams.get("otp") || "";
+
   const [isSignedUp, setIsSignedUp] = useState(false);
-  const [showOtp, setShowOtp] = useState(false);
-  const [isotploading , setIsotploading] = useState(false)
-  const [formdata, setformData] = useState({ username: "", email: "" });
+  const [showOtp, setShowOtp] = useState(
+    otpfromSearchParams?.length == 6 ? true : false
+  );
+  const [isotploading, setIsotploading] = useState(false);
+  const [formdata, setformData] = useState({
+    username: "",
+    email: emailfromSearchParams,
+  });
   const [error, setError] = useState({});
   const [otp, setOtp] = useState(Array(6).fill(""));
   const { showSnackbar } = useSnackbar();
-  const searchParams = useSearchParams();
+
   const [isPending, startTransition] = useTransition();
-  const redirectTo = searchParams.get('redirect')||"/"
+
   const handleSignup = async () => {
     const validationArray = ["email"];
     if (isSignedUp) {
@@ -37,7 +47,9 @@ const AuthenticationComp = () => {
       return;
     }
     if (isSignedUp) {
-      const res = await createUser({ body: formdata });
+      const res = await createUser({
+        body: { ...formdata, redirectTo: redirectTo },
+      });
       const { status } = res;
       if (status == 409) {
         startTransition(() => {
@@ -49,7 +61,9 @@ const AuthenticationComp = () => {
         });
       }
     } else {
-      const res = await loginUser({ body: formdata });
+      const res = await loginUser({
+        body: { ...formdata, redirectTo: redirectTo },
+      });
       const { status, message } = res;
       if (status == SUCCES_STATUS) {
         startTransition(() => {
@@ -72,27 +86,31 @@ const AuthenticationComp = () => {
     setformData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError((prev) => ({ ...prev, [e.target.name]: undefined }));
   };
-  const handleSubmitOtp = async (incomingotp="") => {
-   if(incomingotp.length<6){
-    showSnackbar({ message: "Please enter 6 digit otp", severity: "error" });
-    return
-   }
-   setIsotploading(true)
+  const handleSubmitOtp = async (incomingotp = "") => {
+    if (incomingotp.length < 6) {
+      showSnackbar({ message: "Please enter 6 digit otp", severity: "error" });
+      return;
+    }
+    setIsotploading(true);
     const res = await verifyOtp({
       body: { email: formdata?.email, otp: incomingotp },
     });
-    const { status, message , token } = res || {};
+    const { status, message, token } = res || {};
     if (status === SUCCES_STATUS) {
-        showSnackbar({ message: message, severity: "success" });
-         CookieManager.set(USER_TOKEN, token)
-        // localStorageUtil.set(USER_TOKEN , token)
-        redirect(redirectTo);
+      showSnackbar({ message: message, severity: "success" });
+      CookieManager.set(USER_TOKEN, token);
+      // localStorageUtil.set(USER_TOKEN , token)
+      redirect(redirectTo);
     } else {
-        showSnackbar({ message: message, severity: "error" });
+      showSnackbar({ message: message, severity: "error" });
     }
-    setIsotploading(false)
+    setIsotploading(false);
   };
- 
+  useEffect(() => {
+    if (emailfromSearchParams && otpfromSearchParams) {
+      handleSubmitOtp(otpfromSearchParams);
+    }
+  }, [otpfromSearchParams]);
   return (
     <div
       className="relative min-h-screen bg-cover bg-center"
@@ -108,9 +126,7 @@ const AuthenticationComp = () => {
         <div className="text-center">
           <h1 className="text-5xl font-semibold animate__animated animate__fadeIn animate__delay-1s">
             Welcome to Our Service
-            <button onClick={()=>test()}>
-            test
-            </button>
+            <button onClick={() => test()}>test</button>
           </h1>
           <p className="text-xl animate__animated animate__fadeIn animate__delay-2s">
             Create your account to get started.
@@ -216,11 +232,16 @@ const AuthenticationComp = () => {
               <OTPInput
                 onOTPChange={handleOtpChange}
                 onOTPComplete={handleSubmitOtp}
+                existOtp={
+                  otpfromSearchParams
+                    ? otpfromSearchParams.split("")
+                    : ["", "", "", "", "", ""]
+                }
               />
               <button
-              disabled={isotploading}
+                disabled={isotploading}
                 type="button"
-                onClick={()=>handleSubmitOtp()}
+                onClick={() => handleSubmitOtp()}
                 className="text-white w-full   animate-bounce bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
               >
                 {isotploading ? "Verifying OTP" : "Verify OTP"}
