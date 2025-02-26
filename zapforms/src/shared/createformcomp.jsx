@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 const Createformcomp = () => {
   const router = useRouter();
   return (
-    <div className="flex flex-row mt-6 md:flex-row items-center justify-between px-6 py-10">
+    <div className="flex flex-col xl:flex-row mt-6 md:flex-row items-center justify-evenly px-6 py-10">
       {/* Image Section (Left side) */}
       <div
         onClick={() => router.push("/create")}
-        className="w-full cursor-pointer md:w-1/2 flex justify-center md:justify-start"
+        className="w-full cursor-pointer md:w-1/2  flex flex-row justify-center "
       >
         <Image
           alt="Zapforms Logo"

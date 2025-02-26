@@ -1,7 +1,7 @@
-
-const baseUrl = process.env.baseUrl||"http://localhost:5000/";
+const baseUrl = process.env.baseUrl || "http://localhost:5000/";
 export const signupApi = `${baseUrl}auth/signup`;
 export const loginpApi = `${baseUrl}auth/login`;
-export const verifyOtpApi = `${baseUrl}auth/verify-otp`
+export const verifyOtpApi = `${baseUrl}auth/verify-otp`;
 export const createformApi = `${baseUrl}form/createform`;
-export const respondformApi = `${baseUrl}form/respond`
+export const respondformApi = `${baseUrl}form/respond`;
+export const formListApi = `${baseUrl}form/formlist`

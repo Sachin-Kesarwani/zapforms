@@ -9,6 +9,7 @@ import { createform } from "@/src/actions/form.action";
 import { SUCCES_STATUS } from "@/src/constants/status";
 import Icon from "@/src/shared/icon";
 import { unstable_batchedUpdates } from "react-dom";
+import ErrorMessage from "@/src/shared/errorMessage";
 
 const Createform = () => {
   const [formsInfo, setFormsInfo] = useState({});
@@ -24,8 +25,16 @@ const Createform = () => {
     );
   }
   function craeteformClick() {
+  
     const { data, isFullFormValid } = validateFormArray(formList);
     setformLists(data);
+
+      if(!formsInfo?.title){
+        setErrors((prev)=>({...prev , title:"Please fill out form title"}))
+      }
+      if(!formsInfo?.decription){
+        setErrors((prev)=>({...prev , description:"Please fill out form description"}))
+      }
     if (isFullFormValid) {
       if (formsInfo?.title && formsInfo?.description) {
         startTransition(async () => {
@@ -70,7 +79,7 @@ const Createform = () => {
           key={"createform"}
           className="flex flex-col justify-center items-center my-6"
         >
-          <div className="w-[100%] px-6 py-3 md:w-[80%] bg-orange-500 h-[25vh] rounded-tl-xl rounded-tr-xl xl:w-[60%] 2xl:w-[60%]">
+          <div className="w-[100%] px-6 py-3 md:w-[80%] bg-orange-500 min-h-[25vh] rounded-tl-xl rounded-tr-xl xl:w-[60%] 2xl:w-[60%]">
             {isSubmitted ? (
               <div>
                 <h2 className="text-2xl text-white font-bold">
@@ -106,6 +115,8 @@ const Createform = () => {
                     },
                   }}
                 />
+{errors?.title &&<ErrorMessage message={errors?.title} />}
+
                 <TextField
                   id="custom-textfield"
                   label="Description"
@@ -135,6 +146,8 @@ const Createform = () => {
                     },
                   }}
                 />
+                {errors?.description &&<ErrorMessage message={errors?.description} />}
+
               </div>
             )}
           </div>

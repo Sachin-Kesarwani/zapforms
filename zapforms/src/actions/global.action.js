@@ -1,6 +1,5 @@
 import Cookies from "js-cookie";
 import { USER_TOKEN } from "../constants";
-import { cookies } from "next/headers";
 
 
 
@@ -22,9 +21,7 @@ export const getGetHeaders=({type="application/json" ,     passToken=false
  return res
 }
 
-export const getServerSideGetHeaders = ({ type = "application/json", passToken = false }) => {
-  const token = cookies().get("USER_TOKEN")?.value || ""; // ✅ Get token correctly in Next.js Server Components
-
+export const getServerSideGetHeaders = ({ type = "application/json",token=""}) => {
   let res = {
     credentials: "include", // ✅ Correct value
     headers: {
@@ -32,7 +29,7 @@ export const getServerSideGetHeaders = ({ type = "application/json", passToken =
     },
     method: "GET",
   };
-  if (passToken && token) {
+  if (token) {
     res.headers["authorization"] = `Bearer ${token}`;
   }
 
