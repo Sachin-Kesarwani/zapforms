@@ -8,17 +8,19 @@ const Respondformcomponenet = (props) => {
   function getformAsperTypes(data){
    const {type   ,label , placeholder} = data
     const ui ={
-        text:<div className=""><h1>{label}</h1></div>,
-        textarea:<div><h1>{label}</h1></div>,
-        email:<div><h1>{label}</h1></div>,
-        password:<div><h1>{label}</h1></div>,
-        date:<div><h1>{label}</h1></div>,
-        number:<div><h1>{label}</h1></div>,
-        tel:<div><h1>{label}</h1></div>,
-        select:<div><h1>{label}</h1></div>,
-        checkbox:<div><h1>{label}</h1></div>,
-        radio:<div><h1>{label}</h1></div>,
-        range:<div><h1>{label}</h1></div>,
+        text:<Wrapper>
+          <h1>{label}</h1>
+        </Wrapper>,
+        textarea:<Wrapper><h1>{label}</h1> </Wrapper>,
+        email:<Wrapper><h1>{label}</h1> </Wrapper>,
+        password:<Wrapper><h1>{label}</h1> </Wrapper>,
+        date:<Wrapper><h1>{label}</h1> </Wrapper>,
+        number:<Wrapper><h1>{label}</h1> </Wrapper>,
+        tel:<Wrapper><h1>{label}</h1> </Wrapper>,
+        select:<Wrapper><h1>{label}</h1> </Wrapper>,
+        checkbox:<Wrapper><h1>{label}</h1> </Wrapper>,
+        radio:<Wrapper><h1>{label}</h1> </Wrapper>,
+        range:<Wrapper><h1>{label}</h1> </Wrapper>,
     }
    return  ui[type]
   }
@@ -42,3 +44,10 @@ const Respondformcomponenet = (props) => {
 };
 
 export default Respondformcomponenet;
+
+function Wrapper({children}){
+  return <div className="w-[100%] flex flex-col justify-between px-6 py-3 md:w-[80%] h-[25vh] rounded-xl xl:w-[60%] 2xl:w-[60%] mt-4 cursor-pointer"
+  style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}>
+{children}
+  </div>
+}

@@ -10,13 +10,17 @@ import { SUCCES_STATUS } from "@/src/constants/status";
 import Icon from "@/src/shared/icon";
 import { unstable_batchedUpdates } from "react-dom";
 import ErrorMessage from "@/src/shared/errorMessage";
+import { useSnackbar } from "@/src/providers/snackbarProvide";
 
 const Createform = () => {
   const [formsInfo, setFormsInfo] = useState({});
   const [errors, setErrors] = useState({});
   const [isPending, startTransition] = useTransition();
   const [isSubmitted, setIssubmitted] = useState(false);
+  const [formCreatedId , setformCreatedId] = useState(null)
   let [formList, setformLists] = useState([{ type: "text" }]);
+    const { showSnackbar } = useSnackbar();
+  
   function updateFormdata({ index, data }) {
     setformLists((prev) =>
       prev.map((item, itemIndex) =>
@@ -38,11 +42,13 @@ const Createform = () => {
     if (isFullFormValid) {
       if (formsInfo?.title && formsInfo?.description) {
         startTransition(async () => {
-          let { status, message } = await createform({
+          let { status, message , data } = await createform({
             body: { ...formsInfo, fields: formList },
           });
+          const {_id} = data||{}
           if (status === SUCCES_STATUS) {
             setIssubmitted(true);
+            setformCreatedId(_id)
           } else {
             showSnackbar({ message: message, severity: "error" });
           }
@@ -57,6 +63,7 @@ const Createform = () => {
       setErrors({});
       setIssubmitted(false);
       setformLists([{ type: "text" }]);
+      setformCreatedId(null)
     });
   }, []);
 
@@ -64,7 +71,7 @@ const Createform = () => {
     if (navigator.share) {
       navigator
       .share({
-        url: process.env.NEXT_PUBLIC_FRONTEND_URL,
+        url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}respond/${formCreatedId}`,
       })
         .then(() => console.log("Shared successfully!"))
         .catch((error) => console.error("Error sharing:", error));

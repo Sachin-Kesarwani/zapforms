@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 const EachformCard = (props) => {
   const { data } = props;
-  console.log(data)
   const router = useRouter()
   let { title = "", description = "", createdAt  , _id
   } = data;
