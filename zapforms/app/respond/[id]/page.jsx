@@ -1,13 +1,11 @@
-import React from 'react'
+import { getRespondformAction } from "@/src/actions/form.action";
+import Respondformcomponenet from "@/src/components/forms/respondform";
 
-const page = ({ params }) => {
-    const { id } = params; // Get the dynamic route parameter
+const Page = async ({ params }) => {
+  const { id } = params; 
+  const {data} = await getRespondformAction({id});
+  console.log(data)
+  return <div><Respondformcomponenet data={data}/></div>;
+};
 
-  return (
-    <div>
-      
-    </div>
-  )
-}
-
-export default page
+export default Page;
